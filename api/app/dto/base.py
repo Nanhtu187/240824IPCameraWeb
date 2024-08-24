@@ -8,13 +8,13 @@ from api.app.helper.utility import convert_str_to_camel, convert_str_to_pascal, 
 class CamelBaseModel(BaseModel):
     class Config:
         alias_generator = convert_str_to_camel
-        allow_population_by_field_name = True
+        populate_by_name = True
         
         
 class PascalBaseModel(BaseModel):
     class Config:
         alias_generator = convert_str_to_pascal
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class OpenApiResponseModel:

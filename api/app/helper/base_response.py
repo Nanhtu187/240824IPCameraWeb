@@ -1,7 +1,7 @@
 from typing import TypeVar, Generic, Optional, Union
 
 from api.app.dto.base import CamelBaseModel
-from pydantic.generics import GenericModel
+from pydantic import BaseModel
 
 T = TypeVar("T")
 
@@ -29,7 +29,7 @@ class ResponseSchemaBase(CamelBaseModel):
         return self
 
 
-class DataResponse(ResponseSchemaBase, GenericModel, Generic[T]):
+class DataResponse(ResponseSchemaBase, BaseModel, Generic[T]):
     data: Optional[T] = None
 
     class Config:
