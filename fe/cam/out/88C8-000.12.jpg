@@ -1,0 +1,50 @@
+#!/bin/sh
+
+# Directory where httpd will serve files from
+WEB_DIR="/root/tivaty/web/"
+
+# Check if httpd is running on 8080
+if ps | grep httpd | grep 8000; then
+    echo "httpd is already running on port 8000"
+    # Kill the httpd process on 8000
+    kill 9 $(ps | grep httpd | grep 8000 | awk '{print $1}')
+fi
+
+# Start httpd to serve the web directory
+httpd -p 8000 -h "$WEB_DIR" &
+
+# Variables declaration
+width=640
+height=360
+jpg_file="cam/cam.jpg"
+
+# Ensure the required files have executable permission
+chmod +x ./test_yuvcap
+chmod +x ./jpg_enc
+
+# Ensure WEB_DIR directories exist
+mkdir -p "$WEB_DIR/cam"
+
+# Create a log file in the web directory
+log_file="$WEB_DIR/capture_process.log"
+
+# Run the script in the background
+while true; do
+    # Capture a YUV frame and log errors
+    ./test_yuvcap -b 1 -Y -f "/mnt/cam.yuv" -F 0 -r 1 2>> "$log_file"
+    
+    # Get the most recent YUV file created in /mnt
+    yuv_file_mnt=$(ls -t /mnt/cam*.yuv 2>/dev/null | head -n 1)
+    
+    # Check if the YUV file exists before attempting to convert
+    if [ -z "$yuv_file_mnt" ]; then
+        echo "Error: No YUV file found in /mnt." >> "$log_file"
+        continue
+    fi
+
+    # Convert the captured YUV file to JPG and save it in the web directory
+    ./jpg_enc -y "$yuv_file_mnt" -w 640 -h 360 -f "$WEB_DIR/$jpg_file" 2>> "$log_file"
+    
+    # Optional: Add a small delay to prevent excessive CPU usage
+    sleep 0.001
+done
