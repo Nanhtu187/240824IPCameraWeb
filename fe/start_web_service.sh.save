@@ -1,0 +1,9 @@
+#!/bin/sh
+
+# Directory where httpd will serve files from
+WEB_DIR="/root/tivaty/web/"
+
+# Start test_mjpeg_filo to generate MJPEGtest_mjpeg_filo -o -A -n 0 > $WEB_DIR/stream.mjpeg &
+
+# Start httpd to serve the web directory
+httpd -p 8080 -h $WEB_DIR

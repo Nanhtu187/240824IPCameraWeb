@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Fetch Image Example</title>
+    </head>
+    <body>
+        <div>
+            <label for="image-url">Enter Image URL:</label>
+            <input
+                type="text"
+                id="image-url"
+                placeholder="http://localhost:8080/your-image.jpg"
+            />
+            <button onclick="fetchImage()">Fetch Image</button>
+        </div>
+        <div id="image-container"></div>
+        <script>
+            async function fetchImage() {
+                const url = document.getElementById("image-url").value;
+                if (!url) {
+                    alert("Please enter a URL");
+                    return;
+                }
+
+                try {
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    const blob = await response.blob();
+                    const img = document.createElement("img");
+                    img.src = URL.createObjectURL(blob);
+                    document.getElementById("image-container").appendChild(img);
+                } catch (error) {
+                    console.error(
+                        "There has been a problem with your fetch operation:",
+                        error
+                    );
+                }
+            }
+        </script>
+    </body>
+</html>
